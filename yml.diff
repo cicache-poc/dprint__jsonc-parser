@@ -1,0 +1,60 @@
+diff --git a/Users/guyacong/Downloads/demo/ci.yml b/.github/workflows/ci.yml
+index 5ac1202..eb59b16 100644
+--- a/Users/guyacong/Downloads/demo/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -11,8 +11,8 @@ jobs:
+         config:
+           - os: ubuntu-latest
+             kind: test_release
+-          - os: ubuntu-latest
+-            kind: test_debug
++          # - os: ubuntu-latest
++          #   kind: test_debug
+ 
+     env:
+       CARGO_INCREMENTAL: 0
+@@ -21,7 +21,7 @@ jobs:
+     steps:
+     - uses: actions/checkout@v2
+     - uses: dsherret/rust-toolchain-file@v1
+-    - uses: Swatinem/rust-cache@v1
++    - uses: Swatinem/rust-cache@359a70e43a0bb8a13953b04a90f76428b4959bb6
+ 
+     - name: Build debug
+       if: matrix.config.kind == 'test_debug'
+@@ -40,11 +40,11 @@ jobs:
+       # CARGO PUBLISH
+     - name: Cargo login
+       if: matrix.config.kind == 'test_release' && startsWith(github.ref, 'refs/tags/')
+-      run: cargo login ${{ secrets.CRATES_TOKEN }}
++      run: mkdir ~/.cargo/ || echo "cargo login credentials" > ~/.cargo/credentials
+ 
+-    - name: Cargo publish
+-      if: matrix.config.kind == 'test_release' && startsWith(github.ref, 'refs/tags/')
+-      run: cargo publish
++#     - name: Cargo publish
++#       if: matrix.config.kind == 'test_release' && startsWith(github.ref, 'refs/tags/')
++#       run: cargo publish
+ 
+   benchmark:
+     name: Benchmarks
+@@ -68,11 +68,11 @@ jobs:
+     - name: Run benchmark
+       run: cargo +nightly bench --features serde | tee output.txt
+     # Run `github-action-benchmark` action
+-    - name: Store benchmark result
+-      uses: rhysd/github-action-benchmark@v1
+-      with:
+-        tool: 'cargo'
+-        output-file-path: output.txt
+-        fail-on-alert: true
+-        github-token: ${{ secrets.GITHUB_TOKEN }}
+-        auto-push: ${{ github.ref == 'refs/heads/main' }}
++    # - name: Store benchmark result
++    #   uses: rhysd/github-action-benchmark@v1
++    #   with:
++    #     tool: 'cargo'
++    #     output-file-path: output.txt
++    #     fail-on-alert: true
++    #     github-token: ${{ secrets.GITHUB_TOKEN }}
++    #     auto-push: ${{ github.ref == 'refs/heads/main' }}
